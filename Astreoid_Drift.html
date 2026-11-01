@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sansita:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700;1,800;1,900&display=swap" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Astroid Drift</title>
     <style>
+        
         *{
             margin: 0;
             padding: 0;
@@ -13,23 +17,23 @@
         body{
             background-color:  #000000;
             color: white;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Sansita', sans-serif;
         }
         #game {
             width: 100%;
             height: 100dvh;
             position: relative;
             overflow: hidden;
-            background: radial-gradient(ellipse at bottom, #172451 0%, #080d22 50%, #03050e 100%);
+            background: black
         }
         canvas{
-            postion: absolute;
+            position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
         }
         .hud{
-            positon: absolute;
+            position: absolute;
             top: 22px;
             left: 22px;
             right: 22px;
@@ -43,7 +47,6 @@
             font-size: 22px;
             font-weight: bold;
             letter-spacing: 2px;
-            font-family: 'SANSATION', sans-serif;
             color:#2a773d;
             text-shadow: 0 0 18px #2a773d;
         }
@@ -74,9 +77,10 @@
             padding: 32px 24px;
             border: 1px solid rgba(124, 247, 255, 0.27);
             border-radius: 24px;
-            background: rgba(9,16,42,0.88);
-            box-shadow: 0 0 60px rgba(34, 211, 238, 0.09);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 72, 0, 0.88);
+            color: black
+           
+            
         }
         .eyebrow{
             color:#7cf7ff;
@@ -194,7 +198,134 @@
                 YOU DIED😢
             Final Score: <span id="finalScore">0</strong>
             High Score: <span id="highScore">0</strong></p>
-
             </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" id="leftBtn" aria-label="Move left">←</button>
+            <div class="right">
+                <button class="control-btn" id="upBtn" aria-label="Move up">↑</button>
+                <button class="control-btn" id="downBtn" aria-label="Move down">↓</button>
+                <button class="control-btn" id="rightBtn" aria-label="Move right">→</button>
+            </div>
+        </div>"
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const startScreen = document.getElementById("startScreen");
+        const gameOverScreen = document.getElementById("gameOverScreen");
+        const scoreEL = document.querySelector(".score");
+        const highScoreEL = document.getElementById("highScore");
+        
+        let W = 0;
+        let H = 0;
+        let running = false;
+        let animationId = 0;
+        let lastTime = 0;
+        let elasped = 0;
+        let score = 0;
+        let astreoidTimer = 0;
+        let startTimer = 0;
+        let shake = 0;
+        let highScore = 0;
+
+    try{
+        best = Number(localStorage.getItem("highScore")) || 0;
+    } catch(e){}
+
+    bestEl.textContent = best;
+
+    const keys = {}
+    const touch = {
+        left: false,
+        right: false,
+        up: false,
+        down: false
+    }
+
+    let stars = []
+    let astreoids = []
+    let collectables = []
+    let particles = []
+
+    const player = {
+        x: 0,
+        y: 0,
+        size: 15,
+        speed: 290,
+        invincible: 0
+    }
+
+    function resize(){
+       const rect = canvas.getBoundingClientRect();
+       W = rect.width;
+       H = rect.height;
+
+       const dpr = Math.min(window.devicePixelRatio || 1, 2);
+       canvas.width = Math.round(W * dpr);
+       canvas.height = Math.round(H * dpr);
+       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+       
+       if (!running){
+        player.x = W / 2;
+        player.y = H * 0.75;
+       }
+
+       createBackground();
+
+    }
+    function createBackground(){
+        stars = Array.from({length: Math.max(70,Math.floor(W * H / 6500))}, () => ({
+            x: random(0, W),
+            y: random(0, H),
+            r: random(0.5, 1.8),
+            size: random(15, 65),
+            speed: random(0.2, 0.9)
+        }))
+      
+    function resetGame(){
+        score = 0;
+        elasped = 0;
+        astreoidTimer = 0;
+        startTimer = 0;
+        shake = 0;
+
+        astreoids = [];
+        collectables = [];
+        particles = [];
+
+        player.x = W / 2;
+        player.y = H * 0.75;
+        player.invincible = 0;
+
+        storeEl.textContent = 0;
+        highScoreEl.textContent = best;
+    }
+    function startGame(){
+        cancelAnimationFrame(animationId);
+        resetGame();
+
+        startScreen.classList.add("hidden");
+        gameOverScreen.classList.add("hidden");
+
+        running = true;
+        lastTime = performance.now();
+        animationId = requestAnimationFrame(loop);
+    }
+    function endGame(){
+        running = false;
+
+        if (score > best){
+            best = score;
+            try{
+                localStorage.setItem("highScore", String(best));
+            } catch(e){}
+        }
+    }
+}
+    
+    </script>
     </body>
 </html>
